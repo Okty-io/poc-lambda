@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "okty-poc"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-ry831w3jwl4x"
+s3_prefix = "okty-poc"
+region = "eu-west-3"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
