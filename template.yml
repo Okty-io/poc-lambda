@@ -10,7 +10,7 @@ Description: >-
 # Transform section specifies one or more macros that AWS CloudFormation uses to process your template
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
 Transform:
-- AWS::Serverless-2016-10-31
+  - AWS::Serverless-2016-10-31
 
 # Resources declares the AWS resources that you want to include in the stack
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
@@ -25,22 +25,59 @@ Resources:
       Runtime: nodejs12.x
       MemorySize: 128
       Timeout: 3
+      Role:
+        Fn::GetAtt:
+          - 'entrypointRole'
+          - 'Arn'
       Description: Entrypoint of the builder
       Events:
         Api:
           Type: Api
           Properties:
             Path: /
-            Method: POST
+            Method: GET
+
+  entrypointRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: '*'
+                Resource: '*'
 
   nginxBuilder:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/builders/nginx.handle
+      FunctionName: okty-nginx
       Runtime: nodejs12.x
       MemorySize: 128
       Timeout: 3
       Description: Nginx Builder
+
+  phpBuilder:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/builders/php.handle
+      FunctionName: okty-php
+      Runtime: nodejs12.x
+      MemorySize: 128
+      Timeout: 3
+      Description: PHP Builder
 
 Outputs:
   WebEndpoint:
