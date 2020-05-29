@@ -11,7 +11,8 @@ function callLambda(name, event) {
             FunctionName: lambdaArn,
             Payload: JSON.stringify(event) // pass params
         })
-        .promise();
+        .promise()
+        .then(response => JSON.parse(response.Payload));
 }
 
 async function buildOutput() {
@@ -28,5 +29,10 @@ exports.handle = async (event) => {
 
     console.info(JSON.stringify({ event: 'End', output }));
 
-    return { statusCode: 200, body: output };
+    return {
+        statusCode: 200,
+        headers: {},
+        body: JSON.stringify(output),
+        isBase64Encoded: false
+    };
 }

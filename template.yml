@@ -51,12 +51,18 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       Policies:
-        - PolicyName: root
+        - PolicyName: InvokeBuilderLambda
           PolicyDocument:
             Version: 2012-10-17
             Statement:
               - Effect: Allow
-                Action: '*'
+                Action: 'lambda:InvokeFunction'
+                Resource: !Sub 'arn:aws:lambda:eu-west-3:${AWS::AccountId}:function:*'
+              - Effect: Allow
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
                 Resource: '*'
 
   nginxBuilder:

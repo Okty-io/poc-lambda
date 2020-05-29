@@ -5,5 +5,5 @@ version = 0.1
 stack_name = "okty-poc"
 s3_bucket = "okty-poc-artifact"
 region = "eu-west-3"
-confirm_changeset = true
+confirm_changeset = false
 capabilities = "CAPABILITY_IAM"
