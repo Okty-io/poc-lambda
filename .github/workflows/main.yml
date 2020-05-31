@@ -9,9 +9,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-18.04
-    
+    container: node:12
+  
     steps:
     - uses: actions/checkout@v2
+      
+    - name: Install dependencies
+      run: npm install 
 
     - name: Run Jest
-      uses: stefanoeb/jest-action@1.0.2
+      run: npm test 
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+
