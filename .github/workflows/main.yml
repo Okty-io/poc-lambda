@@ -14,4 +14,4 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Run Jest
-      run: stefanoeb/jest-action@1.0.2
+      uses: stefanoeb/jest-action@1.0.2
