@@ -10,36 +10,46 @@ jobs:
   build:
     runs-on: ubuntu-18.04
     container: node:12
-  
-    steps:
-    - uses: actions/checkout@v2
-      
-    - name: Install dependencies
-      run: npm install 
 
-    - name: Run Jest
-      run: npm test 
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-        
-    - name: Upload sources to artifact
-      uses: actions/upload-artifact@v1
-      with:
-        name: sources
-        path: ./
-  
-  deploy: 
+    steps:
+      - name: Get sources
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Jest
+        run: npm test
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+
+  deploy:
     needs: build
     runs-on: ubuntu-18.04
-    
+
     steps:
-      - name: Download math result for job 1
-        uses: actions/download-artifact@v1
+      - name: Get sources
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: SAM Build
+        uses: youyo/aws-sam-action/python3.8@master
         with:
-          name: source
-          
-      - name: List files
-        run: ls
-    
+          sam_command: build
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: SAM Deploy
+        uses: youyo/aws-sam-action/python3.8@master
+        with:
+          sam_command: 'deploy --no-fail-on-empty-changeset'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
