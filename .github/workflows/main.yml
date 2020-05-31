@@ -23,4 +23,22 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-
+        
+    - name: Upload sources to artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: sources
+        path: ./
+  
+  deploy: 
+    runs-on: ubuntu-18.04
+    
+    steps:
+      - name: Download math result for job 1
+        uses: actions/download-artifact@v1
+        with:
+          name: source
+          
+      - name: List files
+        run: ls
+    
